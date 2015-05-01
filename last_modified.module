@@ -1,0 +1,43 @@
+<?php
+error_reporting(E_ALL);
+ini_set('display_errors', TRUE);
+ini_set('display_startup_errors', TRUE);
+
+function last_modified_menu() {
+	$items['last_modified/date'] = array(
+		'access callback' => TRUE,
+		'page callback'  => 'getLastModified',
+		'type' => MENU_CALLBACK
+	);
+	return $items;
+}
+
+function getLastModified () {
+
+	$result = array(
+		'date' => get_last_updated() * 1000
+	);
+
+	drupal_json_output($result);
+
+	drupal_exit();
+}
+
+function get_last_updated() {
+
+	// Otherwise, find the timestamp for the latest node record
+	$last_updated = db_select('node', 'n')
+		->fields('n', array('changed'))
+		->condition('status', 0, '>') // only published nodes count
+		->orderBy('changed', 'DESC')
+		->range(0, 1)
+		->execute()
+		->fetchField();
+
+	// If nothing found, return FALSE.
+	if (!$last_updated) {
+		return FALSE;
+	}
+
+	return $last_updated;
+}

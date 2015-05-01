@@ -1,0 +1,5 @@
+name = Last Modified Date
+description = Get the date/time of the last modified content
+core = 7.x
+package = Last Modified Date
+version = "7.0"
